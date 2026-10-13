@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TASK DECK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@200;300;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9edf0;--pan:#f7f9fa;--ln:#c6ced5;--ink:#27313a;--sub:#7d8a95;--or:#ff6a2b;--bl:#1b8fd0;--rd:#e03a2e;--bg1:#f4f6f8;--bg2:#dfe5ea;--tk:rgba(39,49,58,.26);--hi:#fff;--sh:rgba(60,80,100,.13);--trk:#e1e6ea;--inv:#fff;--f1:'Saira','Zen Kaku Gothic New',sans-serif;--f2:'Zen Kaku Gothic New','Yu Gothic UI',sans-serif}
+body.dark{--bg:#0b1016;--pan:#121920;--ln:#2a3541;--ink:#e3ebf2;--sub:#8593a0;--or:#22d3ee;--bl:#7c9cff;--rd:#ff5a4d;--bg1:#0e141b;--bg2:#070a0e;--tk:rgba(200,220,240,.24);--hi:rgba(255,255,255,.06);--sh:rgba(0,0,0,.55);--trk:#222c37;--inv:#0b1016}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--f2);user-select:none}
+body::before{content:"";position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,var(--bg1),var(--bg2))}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(90deg,var(--tk) 0 1px,transparent 1px 120px) 0 0/100% 9px no-repeat,repeating-linear-gradient(90deg,var(--tk) 0 1px,transparent 1px 12px) 0 0/100% 4px no-repeat,repeating-linear-gradient(90deg,var(--tk) 0 1px,transparent 1px 120px) 0 100%/100% 9px no-repeat,repeating-linear-gradient(90deg,var(--tk) 0 1px,transparent 1px 12px) 0 100%/100% 4px no-repeat}
+#hd{position:fixed;left:4vw;top:26px;z-index:3;font:200 clamp(22px,3vw,40px)/1 var(--f1);letter-spacing:.34em;white-space:nowrap}
+#hd b{font-weight:600;color:var(--or)}#hd small{display:block;font:500 12px var(--f1);letter-spacing:.3em;color:var(--sub);margin-top:10px;max-width:60vw;overflow:hidden;text-overflow:ellipsis}
+#ck{position:fixed;right:4vw;top:22px;z-index:3;text-align:right;font:200 clamp(26px,3.6vw,48px)/1 var(--f1);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+#ck small{display:block;font:500 12px var(--f1);letter-spacing:.34em;color:var(--sub);margin-top:8px}#ck small.run{color:var(--or)}
+#bar{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:5;display:flex;gap:8px}
+#bar div{padding:3px 12px 4px;font:600 10px/1 system-ui,sans-serif;letter-spacing:.3em;color:#fff;background:rgba(20,26,34,.55);border-radius:0 0 8px 8px;cursor:pointer;opacity:.4}#bar div:hover{opacity:1}#bar div.on{opacity:.95;background:var(--or);color:var(--inv)}
+#root{position:fixed;left:4vw;right:4vw;top:118px;bottom:34px;z-index:2}
+#frame{position:absolute;inset:0;border:1px solid var(--ln);border-radius:26px;background:var(--pan);box-shadow:0 1px 0 var(--hi) inset,0 18px 40px var(--sh);opacity:.55;transition:opacity .5s}body.tooling #frame{opacity:1}
+#seats,#grid{position:absolute;inset:16px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:14px}
+#seats i{border:1px dashed var(--ln);border-radius:22px;position:relative;opacity:.7}#seats i::after{content:attr(data-n);position:absolute;left:16px;top:12px;font:500 10px var(--f1);letter-spacing:.3em;color:var(--ln)}
+#grid{overflow:hidden;pointer-events:none}
+#idle{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--sub);font:400 14px/1.9 var(--f2);text-align:center;transition:opacity .4s;pointer-events:none}body.tooling #idle{opacity:0}
+#idle b{font:200 30px var(--f1);letter-spacing:.5em;text-indent:.5em;color:var(--ink)}#idle code{font:400 12px ui-monospace,Consolas,monospace;color:var(--sub)}
+.tw{min-width:0;min-height:0;background:var(--pan);border:1px solid var(--ln);border-radius:22px;position:relative;overflow:hidden;animation:wo .7s cubic-bezier(.2,.8,.2,1) both}
+.tw.out{animation:wc .6s cubic-bezier(.45,0,.6,1) forwards}
+.tw.wide{grid-column:1/-1;order:-1}.tw.th i{display:none}.tw.wide p{font-size:25px}
+.tw canvas{top:70px!important;height:calc(100% - 104px)!important}
+@keyframes wo{0%{clip-path:inset(50% 46% 50% 46% round 22px);opacity:0;transform:translateY(14px) scale(.96)}32%{clip-path:inset(49.3% 0 49.3% 0 round 22px);opacity:1;transform:translateY(6px) scale(.98)}80%{transform:translateY(-3px) scale(1.012)}100%{clip-path:inset(0 round 22px);transform:none}}
+@keyframes hop{0%,55%,100%{transform:translateY(0)}28%{transform:translateY(-6px)}}.tw h3 u{margin-left:auto;display:flex;gap:4px;align-items:center;text-decoration:none;height:11px}.tw h3 u em{width:4px;height:4px;border-radius:50%;background:var(--or);animation:hop 1.15s cubic-bezier(.3,.6,.4,1) infinite}.tw h3 u em:nth-child(2){animation-delay:.14s}.tw h3 u em:nth-child(3){animation-delay:.28s}.tw h3 b{margin-left:9px}.tw.done h3 u{display:none}.tw.wide h3 u em{width:5px;height:5px}
+@keyframes twd{0%{transform:scale(1)}40%{transform:scale(1.03)}100%{transform:scale(1)}}@keyframes twf{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}60%{transform:translateX(4px)}}
+.tw.done{animation:twd .45s cubic-bezier(.2,.8,.2,1)}.tw.done.fail{animation:twf .45s ease-out}.tw.done.out,.tw.out{animation:wc .6s cubic-bezier(.45,0,.6,1) forwards}
+@keyframes wc{0%{clip-path:inset(0 round 22px);opacity:1;transform:none}60%{clip-path:inset(49.3% 0 49.3% 0 round 22px);opacity:1;transform:scale(1.02)}100%{clip-path:inset(50% 46% 50% 46% round 22px);opacity:0;transform:translateY(-10px) scale(.96)}}
+.tw h3{font:500 11px var(--f1);letter-spacing:.34em;color:var(--sub);display:flex;justify-content:space-between;padding:16px 22px 0}.tw h3 b{font-weight:500;color:var(--or)}.tw.done h3 b{color:var(--bl)}
+.tw h3 s{text-decoration:none;font-weight:300;letter-spacing:.18em;margin-left:12px;opacity:.8;font-variant-numeric:tabular-nums}.tw>em{position:absolute;right:22px;bottom:17px;font:300 12px/16px var(--f1);letter-spacing:.12em;color:var(--sub);font-style:normal;font-variant-numeric:tabular-nums}.tw.th>em{display:none}
+.tw p{font:500 21px var(--f2);padding:5px 22px 0;white-space:nowrap;height:36px}
+.tw canvas{position:absolute;left:22px;top:80px;width:calc(100% - 44px);height:calc(100% - 122px)}
+.tw q{position:absolute;left:22px;right:74px;bottom:17px;quotes:none;font:400 12px ui-monospace,Consolas,monospace;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:16px}
+.tw i{position:absolute;left:0;bottom:0;height:3px;width:100%;background:var(--or);transform-origin:left;animation:twb 6.2s linear both}@keyframes twb{from{transform:scaleX(0)}}.tw.done i{background:var(--bl)}.tw.fail{border-color:var(--rd)}.tw.fail h3 b{color:var(--rd)}.tw.fail i{background:var(--rd)}.tw.fail p{color:var(--rd)}
+</style>
+</head>
+<body>
+<div id="bar"><div id="b-thm">DARK</div><div id="b-snd">SOUND</div><div id="b-demo">DEMO</div></div>
+<div id="hd">TASK <b>DECK</b><small id="proj"></small></div>
+<div id="ck"><span id="ckt">--:--</span><small id="st">STANDBY</small></div>
+<div id="root"><div id="frame"></div><div id="seats"></div><div id="idle"><b>STANDBY</b><span id="idletx">Claude Code が動き出すと、ここに作業の窓が並びます。</span><code id="idledir"></code></div><div id="grid"></div></div>
+<script>
+'use strict';
+const $ = s => document.querySelector(s), DPR = Math.min(devicePixelRatio || 1, 2), S = { booted: true };
+let INK, SUB, LN, OR, BL, TRK, SOUND = false;
+function pal() { const cs = getComputedStyle(document.body), v = n => cs.getPropertyValue(n).trim(); INK = v('--ink'); SUB = v('--sub'); LN = v('--ln'); OR = v('--or'); BL = v('--bl'); TRK = v('--trk'); }
+function sfxOut(a) { if (!a._sfx) { a._sfx = a.createGain(); const c = a.createDynamicsCompressor(); a._sfx.connect(c); c.connect(a.destination); } a._sfx.gain.value = SOUND ? 1 : 0; return a._sfx; }
+let AC = null, NB = null; const ac = () => { try { if (!AC) { AC = new (window.AudioContext || window.webkitAudioContext)(); NB = AC.createBuffer(1, AC.sampleRate, AC.sampleRate); const d = NB.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; } AC.resume(); } catch (e) {} return AC; };
+function tone(f, dur, vol, delay, f2) { const a = ac(); if (!a) return; const n = a.currentTime + (delay || 0), o = a.createOscillator(), g = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f, n); if (f2) o.frequency.exponentialRampToValueAtTime(f2, n + dur); g.gain.setValueAtTime(0.0001, n); g.gain.exponentialRampToValueAtTime(vol || 0.05, n + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, n + dur); o.connect(g); g.connect(sfxOut(a)); o.start(n); o.stop(n + dur + 0.05); }
+function air(dur, vol, f0, f1, delay) { const a = ac(); if (!a) return; const n = a.currentTime + (delay || 0), s = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain(); s.buffer = NB; bp.type = 'bandpass'; bp.Q.value = 1.4; bp.frequency.setValueAtTime(f0, n); bp.frequency.exponentialRampToValueAtTime(f1, n + dur); g.gain.setValueAtTime(0.0001, n); g.gain.exponentialRampToValueAtTime(vol, n + dur * 0.35); g.gain.exponentialRampToValueAtTime(0.0001, n + dur); s.connect(bp); bp.connect(g); g.connect(sfxOut(a)); s.start(n, Math.random() * 0.4, dur + 0.05); }
+const quiet = f => (...a) => { if (SOUND) f(...a); };
+const sfx = { tk: quiet(() => tone(2093, 0.025, 0.028)), win: quiet(f => { air(0.34, 0.09, 380, 3400); tone(f, 0.1, 0.05, 0.08); tone(f * 1.5, 0.22, 0.045, 0.17); tone(f * 2, 0.3, 0.02, 0.27); }), fin: quiet(f => { tone(f * 2, 0.1, 0.035); tone(f * 3, 0.22, 0.03, 0.08); }), shut: quiet(() => { tone(1175, 0.16, 0.03, 0, 784); air(0.2, 0.04, 2600, 700, 0.03); }), chime: quiet(() => { tone(1046, 0.5, 0.04); tone(1318, 0.6, 0.035, 0.1); tone(1568, 0.9, 0.03, 0.2); }) };
+const GL = 'ABCDEFGHJKLMNPRSTUVWXYZ0123456789';
+function reveal(el, text, step, snd) { const my = (el._rv = (el._rv || 0) + 1); let i = 0; el.textContent = ''; const iv = setInterval(() => { if (el._rv !== my) { clearInterval(iv); return; } i += step; if (i >= text.length) { el.textContent = text; clearInterval(iv); return; } let tail = ''; for (let k = 0; k < 3 && i + k < text.length; k++) tail += GL[Math.random() * GL.length | 0]; el.textContent = text.slice(0, i) + tail; if (snd && i % 2 === 0) sfx.tk(); }, 34); }
+
+/* 道具の名前 → 見出し → 絵の種類と音の高さ */
+const KIND = { Bash: 'コマンドを実行', BashOutput: '結果を確認', Read: '書類を読む', NotebookRead: '書類を読む', Grep: '探す', Glob: '探す', ToolSearch: '探す', Edit: '書き換える', MultiEdit: '書き換える', NotebookEdit: '書き換える', Write: '新しく書く', WebFetch: '外へ照会', WebSearch: '外へ照会', Agent: '応援を呼ぶ', Task: '応援を呼ぶ', Skill: '手順を読む', TodoWrite: '段取りを書く' };
+const TK = { 'コマンドを実行': ['sh', 880], '結果を確認': ['sh', 880], '書類を読む': ['rd', 1175], '手順を読む': ['rd', 1175], '探す': ['se', 1318], '書き換える': ['ed', 988], '新しく書く': ['ed', 988], '段取りを書く': ['ed', 988], '外へ照会': ['nt', 1480], '応援を呼ぶ': ['ag', 784], '考えている': ['th', 698] };
+const kindOf = n => KIND[n] || (/^mcp__/.test(n) ? '外へ照会' : n);
+
+/* 窓の一生：開いて RUN。TW_MIN を過ぎて道具が終わっていれば DONE、少し見せてから畳む（失敗は長めに残す） */
+const TW = [], TWQ = [], FIN = new Set(), BAD = new Set(), TW_MIN = 4200, TW_STAY = 3200, TW_FAIL = 9000;
+let twN = 0, thW = null, busy = false, since = 0, lastEv = 0;
+const cells = () => TW.reduce((n, x) => n + (x.wide ? 3 : 1), 0);
+function twClose(w) { if (w.closing) return; w.closing = true; w.el.classList.add('out'); sfx.shut(); setTimeout(() => { w.el.remove(); const i = TW.indexOf(w); if (i >= 0) TW.splice(i, 1); if (w === thW) thW = null; }, 610); }
+function toolWin(kind, arg, id) { const T = $('#grid'), d = document.createElement('div'), h = document.createElement('h3'), b = document.createElement('b'), p = document.createElement('p'), cv = document.createElement('canvas'), q = document.createElement('q'), tk = TK[kind] || ['ot', 1046]; d.className = 'tw'; b.textContent = 'RUN'; const dots = document.createElement('u'); dots.append(document.createElement('em'), document.createElement('em'), document.createElement('em')); const es = document.createElement('s'), pc = document.createElement('em'); h.append(document.createTextNode('TASK ' + String(++twN).padStart(3, '0')), es, dots, b); d.append(h, p, cv, q, pc, document.createElement('i')); T.appendChild(d);
+  const w = { el: d, cv, c: cv.getContext('2d'), k: tk[0], t0: performance.now(), seed: twN * 7.31, W: 0, H: 0, id: id || '', b, hz: tk[1], kind, arg, min: TW_MIN, es, pc, code: tk[0].toUpperCase() }; TW.push(w); document.body.classList.add('tooling'); try { new ResizeObserver(() => { w.W = 0; }).observe(cv); } catch (e) {} setTimeout(() => { w.W = 0; }, 900);
+  sfx.win(tk[1]); setTimeout(() => reveal(p, kind, 1, true), 380); setTimeout(() => reveal(q, String(arg || '').replace(/\s+/g, ' '), 3, false), 640); return w; }
+function openThink() { const w = toolWin('考えている', '応答を組み立てています', ''); w.b.textContent = 'THINK'; w.min = 1e12; w.wide = true; w.el.classList.add('th', 'wide'); thW = w; }
+function drawTW(now) { for (const w of TW) { if (!w.W) { const r = w.cv.getBoundingClientRect(); if (r.width < 8 || r.height < 8) continue; w.W = r.width; w.H = r.height; w.cv.width = w.W * DPR; w.cv.height = w.H * DPR; } const c = w.c, W = w.W, H = w.H, t = (now - w.t0) / 1000, p = Math.min(1, t * 1000 / w.min), rnd = i => { const x = Math.sin(i * 12.9898 + w.seed) * 43758.5453; return x - Math.floor(x); }; c.setTransform(DPR, 0, 0, DPR, 0, 0); c.clearRect(0, 0, W, H); c.lineCap = 'round';
+    { const el = ((w.dn || now) - w.t0) / 1000, es = w.code + ' · ' + String(Math.floor(el / 60)).padStart(2, '0') + ':' + (el % 60).toFixed(1).padStart(4, '0'); if (w.es.textContent !== es) w.es.textContent = es; const pt = w.wide ? '' : [...String(w.arg || '')].length + ' CH'; if (w.pc.textContent !== pt) w.pc.textContent = pt;
+      c.strokeStyle = LN; c.lineWidth = 1; c.globalAlpha = 0.5; c.beginPath(); for (let k = 0; k <= 4; k++) { const y = Math.min(H - 0.5, Math.round(H * k / 4) + 0.5); c.moveTo(0, y); c.lineTo(W, y); } c.stroke();
+      c.globalAlpha = 0.9; c.beginPath(); const nT = Math.max(10, Math.round(W / 8)); for (let k = 0; k <= nT; k++) { const x = Math.min(W - 0.5, Math.round(k * W / nT) + 0.5); c.moveTo(x, H); c.lineTo(x, H - (k % 5 ? 3 : 7)); } c.stroke(); c.globalAlpha = 1;
+      if (w.wide) { c.fillStyle = SUB; c.font = '500 8px Saira'; c.textAlign = 'left'; c.fillText('+1', 2, 9); c.fillText(' 0', 2, H / 2 - 3); c.fillText('−1', 2, H - 9); }
+      else if (!w.dn) { const x = Math.max(0.5, Math.min(W - 0.5, (0.5 - 0.5 * Math.cos(t * 1.1)) * W)); c.strokeStyle = OR; c.globalAlpha = 0.45; c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); c.globalAlpha = 1; c.fillStyle = OR; c.beginPath(); c.moveTo(x - 4, 0); c.lineTo(x + 4, 0); c.lineTo(x, 6); c.fill(); } }
+    if (w.k === 'th') {
+      const Yj = (x, j) => H / 2 + Math.sin(x * (0.012 + j * 0.006) + t * (1.1 + j * 0.5) + w.seed + j * 2) * H * (0.42 - j * 0.09) * Math.sin(Math.max(0, Math.min(1, x / W)) * Math.PI);
+      c.fillStyle = BL; c.globalAlpha = 0.07; c.beginPath(); for (let x = 0; x <= W; x += 4) { const y = Yj(x, 0); x ? c.lineTo(x, y) : c.moveTo(x, y); } for (let x = W; x >= 0; x -= 4) c.lineTo(x, Yj(x, 2)); c.closePath(); c.fill();
+      c.fillStyle = OR; c.globalAlpha = 0.06; c.beginPath(); for (let x = 0; x <= W; x += 4) { const y = Yj(x, 1); x ? c.lineTo(x, y) : c.moveTo(x, y); } c.lineTo(W, H / 2); c.lineTo(0, H / 2); c.closePath(); c.fill();
+      c.strokeStyle = SUB; c.lineWidth = 1; for (let j = 3; j < 5; j++) { c.globalAlpha = 0.22; c.beginPath(); for (let x = 0; x <= W; x += 4) { const y = H / 2 + Math.sin(x * (0.03 + j * 0.011) - t * (0.7 + j * 0.2) + w.seed * j) * H * 0.1 * Math.sin(x / W * Math.PI); x ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+      for (let j = 0; j < 3; j++) { c.strokeStyle = j === 1 ? OR : j ? BL : INK; c.globalAlpha = j === 1 ? 0.95 : 0.5; c.lineWidth = j === 1 ? 2.2 : 1.2; c.beginPath(); for (let x = 0; x <= W; x += 3) { const y = Yj(x, j); x ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+      for (let i = 0; i < 24; i++) { const j = i % 3, f = (t * (0.07 + 0.03 * j) + rnd(i)) % 1, x = f * W, y = Yj(x, j), on = j === 1; c.strokeStyle = on ? OR : SUB; c.globalAlpha = 0.28; c.lineWidth = 1; c.beginPath(); c.moveTo(x, y); c.lineTo(x, H / 2); c.stroke();
+        c.globalAlpha = 1; c.fillStyle = on ? OR : j ? BL : INK; c.beginPath(); c.arc(x, y, on ? 2.6 : 1.9, 0, 6.3); c.fill(); if (on) { c.strokeStyle = OR; c.globalAlpha = 0.4; c.beginPath(); c.arc(x, y, 5.5, 0, 6.3); c.stroke(); } }
+      c.globalAlpha = 1; }
+    else if (w.k === 'rd') { const n = 8, rh = H / n, sy = p * H; c.font = '500 8px Saira'; c.textAlign = 'left'; for (let i = 0; i < n; i++) { const y = i * rh + rh * 0.36; c.fillStyle = SUB; if (rh >= 9) c.fillText(String(i + 1).padStart(2, '0'), 0, y + rh * 0.3); c.fillStyle = y < sy ? INK : TRK; c.fillRect(18, y, (W - 18) * (0.4 + 0.55 * rnd(i)), rh * 0.26); } c.fillStyle = OR; c.fillRect(0, Math.min(H - 2, sy), W, 2); }
+    else if (w.k === 'sh') { const n = 64, bw = W / n; for (let i = 0; i < n; i++) { const h = H * (0.1 + 0.8 * (0.5 + 0.5 * Math.sin(i * 0.28 - t * 4)) * (0.5 + 0.5 * Math.sin(i * 0.08 + t * 1.3 + w.seed))); c.fillStyle = i / n < p ? BL : LN; c.fillRect(i * bw + bw * 0.25, H - h, bw * 0.5, h); c.fillStyle = INK; c.globalAlpha = 0.55; c.fillRect(i * bw + bw * 0.25, H - h - 3, bw * 0.5, 1); c.globalAlpha = 1; } }
+    else if (w.k === 'ed') { const n = 6, rh = H / n; for (let i = 0; i < n; i++) { const pr = Math.max(0, Math.min(1, p * (n + 1) - i)), y = i * rh + rh * 0.3, hh = rh * 0.34; c.fillStyle = TRK; c.fillRect(0, y, W * 0.44, hh); c.fillRect(W * 0.56, y, W * 0.44, hh); c.fillStyle = OR; c.fillRect(0, y, W * 0.44 * (0.4 + 0.6 * rnd(i)) * (1 - pr), hh); c.fillStyle = BL; c.fillRect(W * 0.56, y, W * 0.44 * (0.4 + 0.6 * rnd(i + 9)) * pr, hh); c.fillStyle = pr > 0 && pr < 1 ? INK : LN; c.beginPath(); c.arc(W * 0.5, y + hh / 2, 2.5, 0, 6.3); c.fill(); } }
+    else if (w.k === 'se') { const C = 26, R = 6, sw = (t * 9) % C; for (let x = 0; x < C; x++) for (let y = 0; y < R; y++) { const hit = rnd(x * 7 + y * 31) < 0.09 && t * 9 > x, near = Math.max(0, 1 - Math.abs(x - sw) / 2.2); c.fillStyle = hit ? OR : near > 0 ? INK : LN; c.beginPath(); c.arc((x + 0.5) * W / C, (y + 0.5) * H / R, hit ? 4 : 1.8 + near * 2, 0, 6.3); c.fill(); } }
+    else if (w.k === 'nt') { const x0 = 14, x1 = W - 34, y0 = H / 2; for (let j = -1; j <= 1; j++) { const cy = y0 + j * H * 0.62; c.strokeStyle = LN; c.lineWidth = 1; c.beginPath(); c.moveTo(x0, y0); c.quadraticCurveTo((x0 + x1) / 2, cy, x1, y0); c.stroke(); for (let k = 0; k < 2; k++) { const u = (t * 0.55 + (j + 1) * 0.21 + k * 0.5) % 1, v = 1 - u, px = v * v * x0 + 2 * v * u * (x0 + x1) / 2 + u * u * x1, py = v * v * y0 + 2 * v * u * cy + u * u * y0; c.fillStyle = OR; c.beginPath(); c.arc(px, py, 3.2, 0, 6.3); c.fill(); } }
+      c.fillStyle = INK; c.beginPath(); c.arc(x0, y0, 5, 0, 6.3); c.fill(); for (let k = 0; k < 3; k++) { const r = (t * 16 + k * 11) % 33; c.strokeStyle = BL; c.globalAlpha = 1 - r / 33; c.lineWidth = 1.5; c.beginPath(); c.arc(x1, y0, 4 + r, 0, 6.3); c.stroke(); } c.globalAlpha = 1; }
+    else { const cx = W / 2, cy = H / 2, R = H * 0.4, ag = w.k === 'ag'; c.strokeStyle = LN; c.lineWidth = 1; c.beginPath(); c.arc(cx, cy, R, 0, 6.3); c.stroke(); for (let k = 0; k < 3; k++) { const a = t * 1.2 + k * 2.094, x = cx + Math.cos(a) * R * (ag ? 1.9 : 1), y = cy + Math.sin(a) * R; if (ag) { c.beginPath(); c.moveTo(cx, cy); c.lineTo(x, y); c.stroke(); } c.fillStyle = k ? BL : OR; c.beginPath(); c.arc(x, y, 5, 0, 6.3); c.fill(); } c.fillStyle = INK; c.beginPath(); c.arc(cx, cy, 6, 0, 6.3); c.fill(); } } }
+(function loop(now) { try { drawTW(now); } catch (e) {} requestAnimationFrame(loop); })(performance.now());
+// 一枚ずつ順に開く。席（九つ・考えている窓は三つぶん）が足りなければ、終わった窓から、無ければいちばん古い窓を畳む
+setInterval(() => { if (!TWQ.length) return; if (cells() < 9) { const q = TWQ.shift(); toolWin(q[0], q[1], q[2]); return; } const live = TW.filter(x => !x.closing && !x.wide); const v = live.find(x => x.dn) || live[0]; if (v) twClose(v); }, 220);
+setInterval(() => { const now = performance.now();
+  for (const w of TW.slice()) { if (w.closing || w.wide) continue; const age = now - w.t0;
+    if (!w.dn && age >= w.min && (!w.id || FIN.has(w.id))) { w.dn = now; const bad = BAD.has(w.id); w.el.classList.add('done'); if (bad) w.el.classList.add('fail'); w.b.textContent = bad ? 'FAILED' : 'DONE'; sfx.fin(bad ? w.hz / 2 : w.hz); }
+    else if (w.dn && now - w.dn > (w.el.classList.contains('fail') ? TW_FAIL : TW_STAY)) twClose(w); }
+  if (busy && !thW && cells() <= 6) openThink();
+  if (thW && !thW.closing) { const q = thW.el.querySelector('q'), sec = Math.round((now - thW.t0) / 1000), n = TW.filter(x => !x.wide && !x.dn && !x.closing).length, tx = (n ? '道具を動かしています' : '応答を組み立てています') + '　' + sec + ' 秒'; if (sec >= 2 && q.textContent !== tx) q.textContent = tx; }
+  // 一仕事が終わったら、ほかの窓が畳み終わってから、考えている窓を畳んで枠を閉じる。終わりの知らせを取りこぼした時は、最後の出来事から十分で打ち切る
+  if (busy && !DEMO && now - lastEv > 600000) setBusy(false);
+  if (!busy) { TW.filter(x => !x.wide && !x.dn && !x.closing && x.id).forEach(w => FIN.add(w.id)); const rest = TW.filter(x => !x.wide); if (!rest.length && !TWQ.length) { if (thW && !thW.closing) twClose(thW); else if (!TW.length) document.body.classList.remove('tooling'); } }
+  if (FIN.size > 400) FIN.clear(); }, 150);
+function setBusy(b) { if (b === busy) return; busy = b; if (b) since = Date.now(); else if (TW.length) sfx.chime(); paintState(); }
+function paintState() { const st = $('#st'); st.classList.toggle('run', busy); if (!busy) st.textContent = 'STANDBY'; }
+setInterval(() => { const d = new Date(); $('#ckt').textContent = d.toTimeString().slice(0, 5); if (busy) { const s = Math.floor((Date.now() - since) / 1000); $('#st').textContent = 'WORKING ' + String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); } }, 500);
+
+/* 番（server.js）から出来事を受ける */
+function onEv(e) { lastEv = performance.now();
+  if (e.ev === 'session') { $('#proj').textContent = e.name || ''; if (e.found === false) { $('#idletx').textContent = '会話の記録がまだ見つかりません。Claude Code を一度動かしてください。'; $('#idledir').textContent = e.dir || ''; } else if (e.found) { $('#idletx').textContent = 'Claude Code が動き出すと、ここに作業の窓が並びます。'; $('#idledir').textContent = ''; } }
+  else if (e.ev === 'state') { TW.slice().forEach(twClose); TWQ.length = 0; (e.tools || []).forEach(t => TWQ.push([kindOf(t.name), t.arg, t.id])); setBusy(!!e.busy); }
+  else if (e.ev === 'tool') { setBusy(true); TWQ.push([kindOf(e.name), e.arg, e.id]); if (TWQ.length > 14) TWQ.shift(); }
+  else if (e.ev === 'tooldone') { FIN.add(e.id); if (e.err) BAD.add(e.id); }
+  else if (e.ev === 'turn') setBusy(e.state === 'start'); }
+function connect() { const es = new EventSource('/events'); es.onmessage = m => { let e; try { e = JSON.parse(m.data); } catch (x) { return; } if (!DEMO) onEv(e); }; es.onerror = () => { es.close(); setTimeout(connect, 3000); }; }
+
+/* 上端の釦：明暗・音・見本 */
+function setTheme(d) { document.body.classList.toggle('dark', d); try { localStorage.setItem('deck.theme', d ? 'dark' : 'light'); } catch (e) {} pal(); $('#b-thm').textContent = d ? 'LIGHT' : 'DARK'; }
+$('#b-thm').onclick = () => setTheme(!document.body.classList.contains('dark'));
+$('#b-snd').onclick = () => { SOUND = !SOUND; try { localStorage.setItem('deck.sound', SOUND ? '1' : '0'); } catch (e) {} $('#b-snd').classList.toggle('on', SOUND); if (SOUND) { ac(); sfx.chime(); } };
+let DEMO = false, dN = 0, dT = 0;
+const DM = [['Bash', ['git status --short', 'npm test', 'docker compose build', 'ls -la src']], ['Read', ['README.md', 'src/index.ts', 'package.json']], ['Grep', ['"TODO"', 'function render', 'useEffect(']], ['Edit', ['src/app.ts', 'src/components/List.tsx']], ['Write', ['docs/notes.md']], ['WebFetch', ['https://example.com/api']], ['Agent', ['調べ物を任せる']]];
+$('#b-demo').onclick = () => { DEMO = !DEMO; $('#b-demo').classList.toggle('on', DEMO); clearInterval(dT); if (!DEMO) { setBusy(false); return; } setBusy(true); $('#proj').textContent = 'DEMO'; dT = setInterval(() => { if (TW.filter(x => !x.wide && !x.closing).length + TWQ.length >= 2 + Math.floor(Math.random() * 5)) return; const k = DM[Math.floor(Math.random() * DM.length)], id = 'demo-' + (++dN); TWQ.push([kindOf(k[0]), k[1][Math.floor(Math.random() * k[1].length)], id]); setTimeout(() => { if (Math.random() < 0.08) BAD.add(id); FIN.add(id); }, 2500 + Math.random() * 7000); }, 900); };
+{ const sb = $('#seats'); for (let i = 1; i <= 9; i++) { const e = document.createElement('i'); e.dataset.n = String(i).padStart(2, '0'); sb.appendChild(e); }
+  let d = true; try { const t = localStorage.getItem('deck.theme'); if (t) d = t === 'dark'; SOUND = localStorage.getItem('deck.sound') === '1'; } catch (e) {} const q = new URLSearchParams(location.search).get('theme'); if (q) d = q === 'dark'; setTheme(d); $('#b-snd').classList.toggle('on', SOUND); }
+addEventListener('pointerdown', () => { if (SOUND) ac(); }, { once: true });
+connect();
+</script>
+</body>
+</html>

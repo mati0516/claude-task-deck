@@ -1,0 +1,9 @@
+services:
+  deck:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${DECK_PORT:-8787}:8787"
+    volumes:
+      # Claude Code の会話の記録（読むだけ）。場所が違う時は CLAUDE_PROJECTS で指す
+      - "${CLAUDE_PROJECTS:-${USERPROFILE:-${HOME}}/.claude/projects}:/data:ro"
